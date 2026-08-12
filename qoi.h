@@ -102,6 +102,12 @@ bool QoiEncode(uint32_t width, uint32_t height, uint8_t channels, uint8_t colors
                     int dr = static_cast<int>(r) - static_cast<int>(pre_r);
                     int dg = static_cast<int>(g) - static_cast<int>(pre_g);
                     int db = static_cast<int>(b) - static_cast<int>(pre_b);
+                    if (dr > 127) dr -= 256;
+                    else if (dr < -128) dr += 256;
+                    if (dg > 127) dg -= 256;
+                    else if (dg < -128) dg += 256;
+                    if (db > 127) db -= 256;
+                    else if (db < -128) db += 256;
 
                     if (dr >= -2 && dr <= 1 && dg >= -2 && dg <= 1 && db >= -2 && db <= 1) {
                         QoiWriteU8(QOI_OP_DIFF_TAG |
@@ -111,6 +117,10 @@ bool QoiEncode(uint32_t width, uint32_t height, uint8_t channels, uint8_t colors
                     } else {
                         int dr_dg = dr - dg;
                         int db_dg = db - dg;
+                        if (dr_dg > 127) dr_dg -= 256;
+                        else if (dr_dg < -128) dr_dg += 256;
+                        if (db_dg > 127) db_dg -= 256;
+                        else if (db_dg < -128) db_dg += 256;
                         if (dg >= -32 && dg <= 31 && dr_dg >= -8 && dr_dg <= 7 &&
                             db_dg >= -8 && db_dg <= 7) {
                             QoiWriteU8(QOI_OP_LUMA_TAG | static_cast<uint8_t>(dg + 32));
